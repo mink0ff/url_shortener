@@ -3,6 +3,7 @@
 #include <userver/logging/log.hpp>
 #include "../utils/validation.hpp"
 #include "../utils/exceptions.hpp"
+#include <userver/components/component_context.hpp>
 
 namespace url_shortener::handlers {
 

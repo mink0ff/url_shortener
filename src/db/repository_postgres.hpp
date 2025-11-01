@@ -1,21 +1,27 @@
 #pragma once
 
+#include <userver/components/component_base.hpp>
+#include <userver/storages/postgres/component.hpp>
 #include <userver/storages/postgres/cluster.hpp>
 #include <optional>
 #include <string>
 
 namespace url_shortener::db {
 
-class RepositoryPostgres {
+class RepositoryPostgres final : public userver::components::ComponentBase {
 public:
-    explicit RepositoryPostgres(userver::storages::postgres::ClusterPtr cluster);
+    static constexpr std::string_view kName = "repository-postgres";
 
-    std::optional<std::string> InsertUrl(const std::string&short_url, const std::string& original_url);
+    explicit RepositoryPostgres(const userver::components::ComponentConfig& config,
+                       const userver::components::ComponentContext& context);
+
+    std::optional<std::string> InsertUrl(const std::string& short_url,
+                                         const std::string& original_url);
 
     std::optional<std::string> GetUrl(const std::string& short_url);
 
 private:
     userver::storages::postgres::ClusterPtr pg_cluster_;
-};  // class RepositoryPostgres
+};
 
 }  // namespace url_shortener::db
