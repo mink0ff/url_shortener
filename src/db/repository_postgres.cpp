@@ -1,6 +1,8 @@
 #include "repository_postgres.hpp"
 #include <userver/logging/log.hpp>
 #include <userver/components/component_context.hpp>
+#include <userver/yaml_config/schema.hpp>
+#include <userver/yaml_config/merge_schemas.hpp>
 
 
 namespace url_shortener::db {
@@ -54,6 +56,18 @@ std::optional<std::string> RepositoryPostgres::GetUrl(const std::string& short_u
 
     LOG_INFO() << "GetUrl: found original_url for short_url: " << short_url;
     return res.AsSingleRow<std::string>();
+}
+
+userver::yaml_config::Schema RepositoryPostgres::GetStaticConfigSchema() {
+    return userver::yaml_config::Schema{R"(
+    type: object
+    description: Configuration for RepositoryPostgres component
+    additionalProperties: false
+    properties:
+    postgres-component:
+        type: string
+        description: The Postgres component to use
+    )"};
 }
 
 }  // namespace url_shortener::db

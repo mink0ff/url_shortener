@@ -20,6 +20,8 @@ public:
 
     std::optional<std::string> GetUrl(const std::string& short_url);
 
+    static userver::yaml_config::Schema GetStaticConfigSchema();
+
 private:
     userver::storages::postgres::ClusterPtr pg_cluster_;
 };

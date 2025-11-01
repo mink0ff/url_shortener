@@ -4,6 +4,8 @@
 #include "../utils/exceptions.hpp"
 #include <userver/components/component_context.hpp>
 #include <userver/logging/log.hpp>
+#include <userver/yaml_config/schema.hpp>
+#include <userver/yaml_config/merge_schemas.hpp>
 
 namespace url_shortener::service {
 
@@ -44,4 +46,16 @@ std::string ShortenerService::GetOriginalUrl(const std::string& short_code) {
     return *result;
 }
 
+
+userver::yaml_config::Schema ShortenerService::GetStaticConfigSchema() {
+    return userver::yaml_config::Schema{R"(
+    type: object
+    description: Configuration for ShortenerService component
+    additionalProperties: false
+    properties:
+    repository:
+        type: string
+        description: The repository component to use
+    )"};
+}
 }  // namespace url_shortener::service
