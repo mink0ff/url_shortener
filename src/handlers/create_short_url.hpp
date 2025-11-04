@@ -1,21 +1,22 @@
 #pragma once
 
-#include <userver/server/handlers/http_handler_base.hpp>
+#include <userver/server/handlers/http_handler_json_base.hpp>
 #include <userver/formats/json/value.hpp>
 #include "../service/shortener_service.hpp"
 
 namespace url_shortener::handlers {
 
-class CreateShortUrl final : public userver::server::handlers::HttpHandlerBase {
+class CreateShortUrl final : public userver::server::handlers::HttpHandlerJsonBase {
 public:
     static constexpr std::string_view kName = "create-short-url";
 
     CreateShortUrl(const userver::components::ComponentConfig& config,
                    const userver::components::ComponentContext& context);
 
-    userver::formats::json::Value HandleRequestJson(const userver::server::http::HttpRequest& request,
-                                                    const userver::formats::json::Value& json,
-                                                    userver::server::request::RequestContext&) const;
+    userver::formats::json::Value HandleRequestJsonThrow(
+        const userver::server::http::HttpRequest& request,
+        const userver::formats::json::Value& json,
+        userver::server::request::RequestContext&) const override;
 
 private:
     service::ShortenerService& service_;

@@ -3,6 +3,10 @@
 #include <userver/components/component_context.hpp>
 #include <userver/yaml_config/schema.hpp>
 #include <userver/yaml_config/merge_schemas.hpp>
+#include <userver/components/component_list.hpp>
+#include <userver/components/component_base.hpp>
+#include <userver/components/component_config.hpp>
+
 
 
 namespace url_shortener::db {
@@ -10,7 +14,9 @@ namespace url_shortener::db {
 RepositoryPostgres::RepositoryPostgres(const userver::components::ComponentConfig& config,
                                        const userver::components::ComponentContext& context)
     : userver::components::ComponentBase(config, context),
-      pg_cluster_(context.FindComponent<userver::components::Postgres>("postgres-db-1").GetCluster()) {
+      pg_cluster_(context.FindComponent<userver::components::Postgres>(
+                      config["postgres-component"].As<std::string>())
+                      .GetCluster()) {
     LOG_INFO() << "RepositoryPostgres initialized";
 }
 
@@ -59,15 +65,15 @@ std::optional<std::string> RepositoryPostgres::GetUrl(const std::string& short_u
 }
 
 userver::yaml_config::Schema RepositoryPostgres::GetStaticConfigSchema() {
-    return userver::yaml_config::Schema{R"(
-    type: object
-    description: Configuration for RepositoryPostgres component
-    additionalProperties: false
-    properties:
-    postgres-component:
-        type: string
-        description: The Postgres component to use
-    )"};
+    return userver::yaml_config::MergeSchemas<userver::components::ComponentBase>(R"(
+type: object
+description: Configuration for RepositoryPostgres component
+additionalProperties: false
+properties:
+  postgres-component:
+    type: string
+    description: The Postgres component to use
+)");
 }
 
 }  // namespace url_shortener::db
