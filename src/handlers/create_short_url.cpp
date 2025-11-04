@@ -9,10 +9,10 @@ namespace url_shortener::handlers {
 
 CreateShortUrl::CreateShortUrl(const userver::components::ComponentConfig& config,
                                const userver::components::ComponentContext& context)
-    : HttpHandlerBase(config, context),
+    : HttpHandlerJsonBase(config, context),
       service_(context.FindComponent<service::ShortenerService>()) {}
 
-userver::formats::json::Value CreateShortUrl::HandleRequestJson(const userver::server::http::HttpRequest& request,
+userver::formats::json::Value CreateShortUrl::HandleRequestJsonThrow(const userver::server::http::HttpRequest& request,
                                                                 const userver::formats::json::Value& json,
                                                                 userver::server::request::RequestContext&) const {
     const std::string original_url = json["original_url"].As<std::string>();
@@ -43,5 +43,6 @@ userver::formats::json::Value CreateShortUrl::HandleRequestJson(const userver::s
         return userver::formats::json::MakeObject("error", e.what());
     }
 }
+
 
 } // namespace url_shortener::handlers

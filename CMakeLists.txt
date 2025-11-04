@@ -25,6 +25,11 @@ add_library(
     src/greeting.cpp #
     src/hello.cpp #
     src/hello_postgres.cpp
+    src/service/shortener_service.cpp #
+    src/handlers/create_short_url.cpp #
+    src/db/repository_postgres.cpp
+    src/utils/id_generator.cpp
+    src/utils/validation.cpp
 )
 target_link_libraries(
     ${PROJECT_NAME}_objs

@@ -14,6 +14,9 @@
 
 #include <hello.hpp>
 #include <hello_postgres.hpp> 
+#include <service/shortener_service.hpp>
+#include <handlers/create_short_url.hpp>
+#include <db/repository_postgres.hpp>
 
 int main(int argc, char* argv[]) {
     auto component_list = userver::components::MinimalServerComponentList()
@@ -26,7 +29,9 @@ int main(int argc, char* argv[]) {
                               .Append<url_shortener::Hello>()
                               .Append<userver::components::Postgres>("postgres-db-1")
                               .Append<url_shortener::HelloPostgres>()
-        ;
+                              .Append<url_shortener::service::ShortenerService>()
+                              .Append<url_shortener::handlers::CreateShortUrl>()
+                              .Append<url_shortener::db::RepositoryPostgres>();
 
     return userver::utils::DaemonMain(argc, argv, component_list);
 }
