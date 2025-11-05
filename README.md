@@ -1,37 +1,86 @@
-# url_shortener
+# URL Shortener Service
 
-Template of a C++ service that uses [userver framework](https://github.com/userver-framework/userver).
+Простой сервис для сокращения URL с возможностью редиректа на оригинальный URL. Реализован на C++ с использованием **[userver](https://github.com/avito-tech/cpp_userver)**.
 
+---
 
-## Download and Build
+## Основные возможности
 
-To create your own userver-based service follow the following steps:
+* Создание короткого URL для заданного длинного URL.
+* Редирект с короткого URL на исходный URL.
+* Проверка формата исходного URL.
+* Обработка ошибок (некорректный URL, несуществующий короткий URL, ошибки базы данных).
+* Хранение данных в PostgreSQL.
 
-1. Press the "Use this template button" at the top right of this GitHub page
-2. Clone the service `git clone your-service-repo && cd your-service-repo && git submodule update --init`
-3. Give a proper name to your service and replace all the occurrences of "url_shortener" string with that name
-4. Feel free to tweak, adjust or fully rewrite the source code of your service.
+---
 
+## Архитектура
 
-## Makefile
+* `handlers/` – обработчики HTTP-запросов (`create_short_url`, `redirect`).
+* `service/` – логика работы с короткими URL (`ShortenerService`).
+* `db/` – репозитории для работы с PostgreSQL (`RepositoryPostgres`).
+* `utils/` – вспомогательные функции: проверка URL, генерация ID, обработка ошибок.
+* `main.cpp` – точка входа, регистрация обработчиков.
 
-`PRESET` is either `debug`, `release`, or if you've added custom presets in `CMakeUserPresets.json`, it
-can also be `debug-custom`, `release-custom`.
+---
 
-* `make cmake-PRESET` - run cmake configure, update cmake options and source file lists
-* `make build-PRESET` - build the service
-* `make test-PRESET` - build the service and run all tests
-* `make start-PRESET` - build the service, start it in testsuite environment and leave it running
-* `make install-PRESET` - build the service and install it in directory set in environment `PREFIX`
-* `make` or `make all` - build and run all tests in `debug` and `release` modes
-* `make format` - reformat all C++ and Python sources
-* `make dist-clean` - clean build files and cmake cache
-* `make docker-COMMAND` - run `make COMMAND` in docker environment
-* `make docker-clean-data` - stop docker containers
+## API
 
+### 1. Создание короткого URL
 
-## License
+**Endpoint:** `POST /create`
+**Content-Type:** `application/json`
 
-The original template is distributed under the [Apache-2.0 License](https://github.com/userver-framework/userver/blob/develop/LICENSE)
-and [CLA](https://github.com/userver-framework/userver/blob/develop/CONTRIBUTING.md). Services based on the template may change
-the license and CLA.
+**Пример запроса:**
+
+```bash
+curl -X POST http://localhost:8080/create \
+     -H "Content-Type: application/json" \
+     -d '{"original_url": "https://example.com"}'
+```
+
+**Пример ответа:**
+
+```json
+{
+  "short_url": "8521303url"
+}
+```
+
+---
+
+### 2. Редирект на оригинальный URL
+
+**Endpoint:** `GET /redirect/{short_url}`
+
+**Пример запроса:**
+
+```bash
+curl -X GET http://localhost:8080/redirect/8521303url
+```
+
+* Если короткий URL найден, возвращается HTTP 302 с заголовком `Location` на оригинальный URL.
+* Если короткий URL не найден, возвращается HTTP 404.
+* Если формат короткого URL некорректный, возвращается HTTP 400.
+
+---
+
+## Примечания
+
+* Убедитесь, что база данных создана и настроена таблица для хранения URL.
+* Короткие URL формируются автоматически через генератор ID.
+* Проверка валидности URL применяется только при создании короткого URL.
+
+---
+
+## Пример использования
+
+```bash
+# Создать короткий URL
+curl -X POST http://localhost:8080/create \
+     -H "Content-Type: application/json" \
+     -d '{"original_url": "https://example.com"}'
+
+# Редирект на оригинальный URL
+curl -X GET http://localhost:8080/redirect/8521303url
+```
