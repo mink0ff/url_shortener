@@ -30,6 +30,7 @@ add_library(
     src/db/repository_postgres.cpp
     src/utils/id_generator.cpp
     src/utils/validation.cpp
+    src/handlers/redirect.cpp
 )
 target_link_libraries(
     ${PROJECT_NAME}_objs

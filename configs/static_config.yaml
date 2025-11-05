@@ -86,4 +86,7 @@ components_manager:
             method: POST            # It will only reply to POST requests.
             task_processor: main-task-processor  # Run it on CPU bound task processor
 
-        
+        redirect:          # Our URL redirect handler.
+            path: /redirect/{short_url}          # Registering handler by URL '/redirect/{short_url}'.
+            method: GET            # It will only reply to GET requests.
+            task_processor: main-task-processor  # Run it on CPU bound task processor
