@@ -27,7 +27,7 @@ std::optional<std::string> RepositoryPostgres::InsertUrl(const std::string& shor
                            userver::storages::postgres::ClusterHostType::kMaster, {});
 
     auto res = transaction.Execute(
-        "INSERT INTO urls (short_url, original_url) VALUES ($1, $2) "
+        "INSERT INTO url_schema.urls (short_url, original_url) VALUES ($1, $2) "
         "ON CONFLICT (short_url) DO NOTHING",
         short_url, original_url);
 
@@ -37,7 +37,7 @@ std::optional<std::string> RepositoryPostgres::InsertUrl(const std::string& shor
         return short_url;
     }
 
-    res = transaction.Execute("SELECT short_url FROM urls WHERE short_url = $1", short_url);
+    res = transaction.Execute("SELECT short_url FROM url_schema.urls WHERE short_url = $1", short_url);
     transaction.Rollback();
 
     auto result = res.AsSingleRow<std::string>();
@@ -53,7 +53,7 @@ std::optional<std::string> RepositoryPostgres::InsertUrl(const std::string& shor
 std::optional<std::string> RepositoryPostgres::GetUrl(const std::string& short_url) {
     const userver::storages::postgres::ResultSet res = pg_cluster_->Execute(
         userver::storages::postgres::ClusterHostType::kSlave,
-        "SELECT original_url FROM urls WHERE short_url = $1", short_url);
+        "SELECT original_url FROM url_schema.urls WHERE short_url = $1", short_url);
 
     if (res.IsEmpty()) {
         LOG_INFO() << "GetUrl: short_url not found: " << short_url;
