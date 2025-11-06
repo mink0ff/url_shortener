@@ -80,3 +80,8 @@ components_manager:
             path: /redirect/{short_url}          # Registering handler by URL '/redirect/{short_url}'.
             method: GET            # It will only reply to GET requests.
             task_processor: main-task-processor  # Run it on CPU bound task processor
+
+        delete-short-url:          # Our URL delete handler.
+            path: /delete          # Registering handler by URL '/delete'.
+            method: DELETE            # It will only reply to DELETE requests.
+            task_processor: main-task-processor  # Run it on CPU bound task processor

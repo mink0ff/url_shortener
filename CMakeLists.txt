@@ -28,6 +28,7 @@ add_library(
     src/utils/id_generator.cpp
     src/utils/validation.cpp
     src/handlers/redirect.cpp
+    src/handlers/delete_short_url.cpp
 )
 target_link_libraries(
     ${PROJECT_NAME}_objs
