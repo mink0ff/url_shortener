@@ -26,6 +26,11 @@ std::string ShortenerService::CreateShortUrl(const std::string& original_url) {
         throw exceptions::ValidationError("Invalid URL format");
     }
 
+    bool exists = repository_.FindUrl(original_url);
+    if (exists) {
+        throw exceptions::ValidationError("Original URL already exists");
+    }
+
     const std::string short_code = utils::GenerateShortId();
 
     auto inserted = repository_.InsertUrl(short_code, original_url);
@@ -46,6 +51,18 @@ std::string ShortenerService::GetOriginalUrl(const std::string& short_code) {
     }
 
     return *result;
+}
+
+std::string ShortenerService::DeleteShortUrl(const std::string& short_code) {
+    LOG_INFO() << "DeleteShortUrl called with: " << short_code;
+
+    bool deleted = repository_.DeleteUrl(short_code);
+    if (!deleted) {
+        throw exceptions::NotFoundError("Short URL not found for deletion");
+    }
+
+    LOG_INFO() << "Successfully deleted short URL: " << short_code;
+    return short_code;
 }
 
 

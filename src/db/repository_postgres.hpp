@@ -20,6 +20,10 @@ public:
 
     std::optional<std::string> GetUrl(const std::string& short_url);
 
+    bool FindUrl(const std::string& original_url);
+
+    bool DeleteUrl(const std::string& short_url);
+
     static userver::yaml_config::Schema GetStaticConfigSchema();
 
 private:

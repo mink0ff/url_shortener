@@ -16,16 +16,6 @@ Redirect::Redirect(const userver::components::ComponentConfig& config,
 std::string Redirect::HandleRequestThrow(const userver::server::http::HttpRequest& request,
                                          userver::server::request::RequestContext&) const {
     const auto& short_url = request.GetPathArg("short_url");
-    
-    // if (!url_shortener::utils::IsValidUrl(short_url)) {
-    //         request.SetResponseStatus(userver::server::http::HttpStatus::kBadRequest);
-    //         auto& response = request.GetHttpResponse();
-    //         response.SetStatus(userver::server::http::HttpStatus::kBadRequest);
-
-    //         LOG_ERROR() << "Invalid URL format: " << short_url;
-
-    //         return R"({"error": "Invalid URL format"})";
-    // }
     try {
         auto original_url = service_.GetOriginalUrl(short_url);
 

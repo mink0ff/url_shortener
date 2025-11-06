@@ -50,6 +50,39 @@ std::optional<std::string> RepositoryPostgres::InsertUrl(const std::string& shor
     return result;
 }
 
+bool RepositoryPostgres::FindUrl(const std::string& original_url) {
+    const userver::storages::postgres::ResultSet res = pg_cluster_->Execute(
+        userver::storages::postgres::ClusterHostType::kSlave,
+        "SELECT 1 FROM url_schema.urls WHERE original_url = $1 LIMIT 1", original_url);
+
+    bool found = !res.IsEmpty();
+    LOG_INFO() << "FindUrl: original_url " << (found ? "found: " : "not found: ") << original_url;
+
+    return found;
+}
+
+bool RepositoryPostgres::DeleteUrl(const std::string& short_url) {
+    userver::storages::postgres::Transaction transaction =
+        pg_cluster_->Begin("transaction_delete_url",
+                           userver::storages::postgres::ClusterHostType::kMaster, {});
+
+    auto res = transaction.Execute(
+        "DELETE FROM url_schema.urls WHERE short_url = $1", short_url);
+
+    if (res.RowsAffected()) {
+        transaction.Commit();
+        LOG_INFO() << "DeleteUrl: deleted short_url: " << short_url;
+        return true;
+    }
+
+    transaction.Rollback();
+    LOG_INFO() << "DeleteUrl: short_url not found for deletion: " << short_url;
+    
+    return false;
+}
+
+
+
 std::optional<std::string> RepositoryPostgres::GetUrl(const std::string& short_url) {
     const userver::storages::postgres::ResultSet res = pg_cluster_->Execute(
         userver::storages::postgres::ClusterHostType::kSlave,
