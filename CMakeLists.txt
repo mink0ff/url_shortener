@@ -22,15 +22,13 @@ include_directories(src)
 
 add_library(
     ${PROJECT_NAME}_objs OBJECT
-    src/greeting.cpp #
-    src/hello.cpp #
-    src/hello_postgres.cpp
     src/service/shortener_service.cpp #
     src/handlers/create_short_url.cpp #
     src/db/repository_postgres.cpp
     src/utils/id_generator.cpp
     src/utils/validation.cpp
     src/handlers/redirect.cpp
+    src/handlers/delete_short_url.cpp
 )
 target_link_libraries(
     ${PROJECT_NAME}_objs
@@ -44,14 +42,14 @@ add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_objs)
 
 # Unit Tests
-add_executable(${PROJECT_NAME}_unittest src/greeting_test.cpp)
-target_link_libraries(${PROJECT_NAME}_unittest PRIVATE ${PROJECT_NAME}_objs userver::utest)
-add_google_tests(${PROJECT_NAME}_unittest)
+# add_executable(${PROJECT_NAME}_unittest src/greeting_test.cpp)
+# target_link_libraries(${PROJECT_NAME}_unittest PRIVATE ${PROJECT_NAME}_objs userver::utest)
+# add_google_tests(${PROJECT_NAME}_unittest)
 
 # Benchmarks
-add_executable(${PROJECT_NAME}_benchmark src/greeting_benchmark.cpp)
-target_link_libraries(${PROJECT_NAME}_benchmark PRIVATE ${PROJECT_NAME}_objs userver::ubench)
-add_google_benchmark_tests(${PROJECT_NAME}_benchmark)
+# add_executable(${PROJECT_NAME}_benchmark src/greeting_benchmark.cpp)
+# target_link_libraries(${PROJECT_NAME}_benchmark PRIVATE ${PROJECT_NAME}_objs userver::ubench)
+# add_google_benchmark_tests(${PROJECT_NAME}_benchmark)
 
 # Functional testing
 userver_testsuite_add_simple()

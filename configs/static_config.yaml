@@ -71,16 +71,6 @@ components_manager:
             throttling_enabled: false
             url_trailing_slash: strict-match
 
-        handler-hello:                    # Finally! Our handler.
-            path: /hello                  # Registering handler by URL '/hello'.
-            method: GET,POST              # It will only reply to GET (HEAD) and POST requests.
-            task_processor: main-task-processor  # Run it on CPU bound task processor
-
-        handler-hello-postgres:          # Our postgres handler.
-            path: /hello-postgres         # Registering handler by URL '/hello-postgres'.
-            method: GET,POST              # It will only reply to GET (HEAD) and POST requests.
-            task_processor: main-task-processor  # Run it on CPU bound task processor
-
         create-short-url:          # Our URL shortener handler.
             path: /create          # Registering handler by URL '/shorten'.
             method: POST            # It will only reply to POST requests.
@@ -89,4 +79,9 @@ components_manager:
         redirect:          # Our URL redirect handler.
             path: /redirect/{short_url}          # Registering handler by URL '/redirect/{short_url}'.
             method: GET            # It will only reply to GET requests.
+            task_processor: main-task-processor  # Run it on CPU bound task processor
+
+        delete-short-url:          # Our URL delete handler.
+            path: /delete          # Registering handler by URL '/delete'.
+            method: DELETE            # It will only reply to DELETE requests.
             task_processor: main-task-processor  # Run it on CPU bound task processor

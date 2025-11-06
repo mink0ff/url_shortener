@@ -15,6 +15,7 @@ public:
 
     std::string CreateShortUrl(const std::string& original_url);
     std::string GetOriginalUrl(const std::string& short_code);
+    std::string DeleteShortUrl(const std::string& short_code);
 
     static userver::yaml_config::Schema GetStaticConfigSchema();
 
