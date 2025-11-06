@@ -17,12 +17,12 @@ userver::formats::json::Value DeleteShortUrl::HandleRequestJsonThrow(const userv
                                                                 userver::server::request::RequestContext&) const {
     const std::string short_url = json["short_url"].As<std::string>();
     try {
-        auto is_delete = service_.DeleteShortUrl(short_url);
+        auto delete_short_url = service_.DeleteShortUrl(short_url);
 
         request.SetResponseStatus(userver::server::http::HttpStatus::kOk);
-        LOG_INFO() << "Deleted short URL: " << short_url;
+        LOG_INFO() << "Deleted short URL: " << delete_short_url;
 
-        return userver::formats::json::MakeObject("deleted_short_url", short_url);
+        return userver::formats::json::MakeObject("deleted_short_url", delete_short_url);
 
     } catch (const exceptions::DatabaseError& e) {
         request.SetResponseStatus(userver::server::http::HttpStatus::kInternalServerError);
@@ -33,6 +33,11 @@ userver::formats::json::Value DeleteShortUrl::HandleRequestJsonThrow(const userv
         request.SetResponseStatus(userver::server::http::HttpStatus::kBadRequest);
         LOG_ERROR() << "Validation error: " << e.what();
 
+        return userver::formats::json::MakeObject("error", e.what());
+    } catch (const exceptions::NotFoundError& e) {
+        request.SetResponseStatus(userver::server::http::HttpStatus::kNotFound);
+        LOG_ERROR() << "Short URL not found: " << short_url;
+        
         return userver::formats::json::MakeObject("error", e.what());
     }
 }
